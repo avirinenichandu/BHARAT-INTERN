@@ -1,0 +1,29 @@
+This is how to create a handwritten digit recognition system using a neural network in Python:
+
+import numpy as np
+import tensorflow as tf
+from tensorflow import keras
+import matplotlib.pyplot as plt
+(x_train, y_train), (x_test, y_test) = keras.datasets.mnist.load_data()
+x_train = x_train / 255.0
+x_test = x_test / 255.0
+y_train = keras.utils.to_categorical(y_train, 10)
+y_test = keras.utils.to_categorical(y_test, 10)
+model = keras.Sequential([
+    keras.layers.Flatten(input_shape=(28, 28)),  # Flatten the 28x28 input images
+    keras.layers.Dense(128, activation='relu'),  # Hidden layer with 128 units and ReLU activation
+    keras.layers.Dropout(0.2),                  # Dropout layer to prevent overfitting
+    keras.layers.Dense(10, activation='softmax') # Output layer with 10 units for 10 classes
+])
+model.compile(optimizer='adam',
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+model.fit(x_train, y_train, epochs=10, batch_size=64, validation_split=0.2)
+test_loss, test_acc = model.evaluate(x_test, y_test)
+print("Test accuracy:", test_acc)
+predictions = model.predict(x_test)
+for i in range(10):
+    plt.subplot(2, 5, i + 1)
+    plt.imshow(x_test[i], cmap='gray')
+    plt.title(f"True: {np.argmax(y_test[i])}\nPredicted: {np.argmax(predictions[i])}")
+plt.show()
